@@ -79,6 +79,25 @@
         padding: 0.1rem 0.35rem;
         font-size: 0.85em;
       }
+
+      figure.concept-visual {
+        margin: 1rem 0;
+        padding: 0.8rem;
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
+        background: #fafafa;
+      }
+
+      figure.concept-visual figcaption {
+        margin-top: 0.6rem;
+        font-size: 0.92em;
+      }
+
+      .concept-visual svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
     </style>
   </head>
   <body>
@@ -440,6 +459,69 @@
         Hard invariant split: verification material is public; proof artifact is
         private and controlled by the liable/relying party.
       </p>
+      <figure class="concept-visual">
+        <svg
+          viewBox="0 0 940 260"
+          role="img"
+          aria-labelledby="gqes-partition-title gqes-partition-desc"
+        >
+          <title id="gqes-partition-title">
+            GQES Public and Private Artifact Partition
+          </title>
+          <desc id="gqes-partition-desc">
+            The public lane contains DID-linked verification material and
+            status history. The private lane contains VC proof artifacts and
+            private attributes under wallet custody. Verifiers consume both
+            lanes without requiring private-attribute publication.
+          </desc>
+
+          <rect x="20" y="20" width="900" height="220" rx="8" fill="#ffffff" stroke="#b8b8b8" />
+          <rect x="40" y="44" width="860" height="78" rx="6" fill="#eef6ff" stroke="#7aa6d9" />
+          <rect x="40" y="138" width="860" height="78" rx="6" fill="#fff4ea" stroke="#d9a774" />
+
+          <text x="56" y="68" font-size="15" font-family="Arial, sans-serif" fill="#1c3f63">
+            Public verification lane
+          </text>
+          <text x="56" y="88" font-size="13" font-family="Arial, sans-serif" fill="#1c3f63">
+            DID-linked verification methods, key history, status, revocation
+          </text>
+          <text x="56" y="108" font-size="13" font-family="Arial, sans-serif" fill="#1c3f63">
+            Publication required for independent verifier retrieval
+          </text>
+
+          <text x="56" y="162" font-size="15" font-family="Arial, sans-serif" fill="#6a3c12">
+            Private proof lane
+          </text>
+          <text x="56" y="182" font-size="13" font-family="Arial, sans-serif" fill="#6a3c12">
+            VC proof artifact, private attributes, holder disclosure controls
+          </text>
+          <text x="56" y="202" font-size="13" font-family="Arial, sans-serif" fill="#6a3c12">
+            Wallet/private custody by default; selective disclosure only
+          </text>
+
+          <rect x="640" y="86" width="230" height="88" rx="8" fill="#ffffff" stroke="#7b7b7b" />
+          <text x="655" y="116" font-size="14" font-family="Arial, sans-serif">
+            Verifier evaluation
+          </text>
+          <text x="655" y="136" font-size="12.5" font-family="Arial, sans-serif">
+            Consume public material
+          </text>
+          <text x="655" y="154" font-size="12.5" font-family="Arial, sans-serif">
+            + holder-presented proof
+          </text>
+
+          <line x1="590" y1="86" x2="640" y2="104" stroke="#5c89ba" stroke-width="2.5" />
+          <polygon points="640,104 630,107 633,98" fill="#5c89ba" />
+
+          <line x1="590" y1="176" x2="640" y2="162" stroke="#b57a41" stroke-width="2.5" />
+          <polygon points="640,162 632,169 630,160" fill="#b57a41" />
+        </svg>
+        <figcaption>
+          Figure: Liability split invariant in this specification. Publication
+          of verification material remains public; proof custody and private
+          attributes remain private unless disclosed by the liable party.
+        </figcaption>
+      </figure>
 
       <section id="artifact-partition">
         <h3>Public and Private Artifact Partition</h3>
@@ -783,6 +865,74 @@
         <h3>
           <span class="mono">VerifyGQES(vc, now, policy)</span> (Normative)
         </h3>
+        <figure class="concept-visual">
+          <svg
+            viewBox="0 0 980 220"
+            role="img"
+            aria-labelledby="gqes-verify-title gqes-verify-desc"
+          >
+            <title id="gqes-verify-title">
+              VerifyGQES Deterministic Decision Flow
+            </title>
+            <desc id="gqes-verify-desc">
+              Ordered checks: VC structure, DID method policy, DID history
+              resolution, cryptographic proof, temporal authorization,
+              status/revocation, optional countersignature, and policy
+              evaluation; output is valid, invalid, or indeterminate.
+            </desc>
+
+            <rect x="20" y="24" width="940" height="172" rx="8" fill="#ffffff" stroke="#b8b8b8" />
+
+            <rect x="44" y="54" width="132" height="52" rx="6" fill="#f2f7ff" stroke="#8caeda" />
+            <text x="56" y="76" font-size="12.5" font-family="Arial, sans-serif">VC structure</text>
+            <text x="56" y="93" font-size="12.5" font-family="Arial, sans-serif">and proof fields</text>
+
+            <rect x="198" y="54" width="136" height="52" rx="6" fill="#f2f7ff" stroke="#8caeda" />
+            <text x="209" y="76" font-size="12.5" font-family="Arial, sans-serif">DID method</text>
+            <text x="209" y="93" font-size="12.5" font-family="Arial, sans-serif">policy filter</text>
+
+            <rect x="356" y="54" width="146" height="52" rx="6" fill="#f2f7ff" stroke="#8caeda" />
+            <text x="367" y="76" font-size="12.5" font-family="Arial, sans-serif">DID history +</text>
+            <text x="367" y="93" font-size="12.5" font-family="Arial, sans-serif">key lineage</text>
+
+            <rect x="524" y="54" width="142" height="52" rx="6" fill="#f2f7ff" stroke="#8caeda" />
+            <text x="536" y="76" font-size="12.5" font-family="Arial, sans-serif">Cryptographic</text>
+            <text x="536" y="93" font-size="12.5" font-family="Arial, sans-serif">proof validity</text>
+
+            <rect x="688" y="54" width="126" height="52" rx="6" fill="#f2f7ff" stroke="#8caeda" />
+            <text x="700" y="76" font-size="12.5" font-family="Arial, sans-serif">Revocation</text>
+            <text x="700" y="93" font-size="12.5" font-family="Arial, sans-serif">and cutoff</text>
+
+            <rect x="836" y="54" width="102" height="52" rx="6" fill="#f2f7ff" stroke="#8caeda" />
+            <text x="848" y="76" font-size="12.5" font-family="Arial, sans-serif">Policy +</text>
+            <text x="848" y="93" font-size="12.5" font-family="Arial, sans-serif">decision</text>
+
+            <line x1="176" y1="80" x2="198" y2="80" stroke="#6c6c6c" stroke-width="2" />
+            <polygon points="198,80 190,84 190,76" fill="#6c6c6c" />
+            <line x1="334" y1="80" x2="356" y2="80" stroke="#6c6c6c" stroke-width="2" />
+            <polygon points="356,80 348,84 348,76" fill="#6c6c6c" />
+            <line x1="502" y1="80" x2="524" y2="80" stroke="#6c6c6c" stroke-width="2" />
+            <polygon points="524,80 516,84 516,76" fill="#6c6c6c" />
+            <line x1="666" y1="80" x2="688" y2="80" stroke="#6c6c6c" stroke-width="2" />
+            <polygon points="688,80 680,84 680,76" fill="#6c6c6c" />
+            <line x1="814" y1="80" x2="836" y2="80" stroke="#6c6c6c" stroke-width="2" />
+            <polygon points="836,80 828,84 828,76" fill="#6c6c6c" />
+
+            <rect x="188" y="130" width="182" height="42" rx="6" fill="#edf8ed" stroke="#7ab37a" />
+            <text x="200" y="156" font-size="12.5" font-family="Arial, sans-serif">Result: valid</text>
+
+            <rect x="404" y="130" width="182" height="42" rx="6" fill="#fff4e8" stroke="#cc8a45" />
+            <text x="416" y="156" font-size="12.5" font-family="Arial, sans-serif">Result: indeterminate</text>
+
+            <rect x="620" y="130" width="182" height="42" rx="6" fill="#ffeef0" stroke="#c66a77" />
+            <text x="632" y="156" font-size="12.5" font-family="Arial, sans-serif">Result: invalid</text>
+          </svg>
+          <figcaption>
+            Figure: Ordered, deterministic verification path. Every failed
+            mandatory check yields either <span class="mono">invalid</span> or
+            <span class="mono">indeterminate</span> with explicit reason codes.
+          </figcaption>
+        </figure>
         <ol class="algorithm">
           <li>
             Validate that <code>vc</code> is a VC object and that required proof
