@@ -93,7 +93,7 @@
       </p>
       <p>
         It defines deterministic verification requirements for VC-carried proof
-        artifacts, DID:WEBVH-linked public verification material, revocation and
+        artifacts, DID-linked public verification material, revocation and
         key-history cutoffs, and relying-party decision outputs.
       </p>
       <p>
@@ -139,11 +139,10 @@
         <a href="#conformance-classes">Conformance Classes</a>.
       </p>
       <p>
-        Unless explicitly overridden, data-model terms such as <a>list</a>,
-        <a>set</a>, <a>tuple</a>, and <a>byte sequence</a> are interpreted
-        according to Infra <a href="#ref-infra">[INFRA]</a>. JSON payload and
-        array semantics are interpreted according to
-        <a href="#ref-rfc8259">[RFC8259]</a>.
+        Unless explicitly overridden, data-model terms such as list, set,
+        tuple, and byte sequence are interpreted according to Infra
+        <a href="#ref-infra">[INFRA]</a>. JSON payload and array semantics are
+        interpreted according to <a href="#ref-rfc8259">[RFC8259]</a>.
       </p>
       <p>
         This specification defines externally observable data models,
@@ -166,12 +165,9 @@
         API usage recipes.
       </p>
       <p class="note">
-        NOTE: The OpenAPI contracts in this repository are not official. They
-        are SUUNTAA ANTAVIA (indicative only). The real official schemas will be
-        decided after building the first viable, minimal reference
-        implementation and will then be updated to match the proven contracts.
-        The current contracts have not been reviewed and do not represent any
-        recommendations by a human.
+        NOTE: The <span class="mono">openapi.yaml</span> contracts are
+        indicative and are not yet normative. Official schemas will be finalized
+        after the first reference implementation.
       </p>
     </section>
 
@@ -181,7 +177,9 @@
       <ul>
         <li>
           the object of standardization for Globally Qualified Electronic
-          Signature and Globally Qualified Electronic Seal artifacts;
+          Signature and Globally Qualified Electronic Seal artifacts
+          (<a>Qualified Electronic Signature</a>,
+          <a>Qualified Electronic Seal</a>);
         </li>
         <li>
           VC-based proof artifact semantics, DID binding constraints, and
@@ -329,7 +327,7 @@
             <td>Verifiers and relying parties</td>
             <td>Produce deterministic acceptance or rejection decisions.</td>
             <td>
-              Public DID:WEBVH verification material and holder-provided proof
+              Public DID-linked verification material and holder-provided proof
               artifacts.
             </td>
             <td>
@@ -347,63 +345,17 @@
 
     <section id="terminology">
       <h2>Terminology</h2>
+      <p>
+        This specification defines only GQES-specific terms. Terms such as
+        governance area, PID, DID Controller, wallet, and trust-network host
+        behavior are imported from sibling specifications and are not redeclared
+        here:
+        <a href="#ref-gdis-core">[GDIS-CORE]</a>,
+        <a href="#ref-gqscd-core">[GQSCD-CORE]</a>,
+        <a href="#ref-gqts-core">[GQTS-CORE]</a>, and
+        <a href="#ref-gqtw-core">[GQTW-CORE]</a>.
+      </p>
       <dl>
-        <dt><dfn>governance area</dfn></dt>
-        <dd>
-          A legal and administrative domain that issues and governs identity
-          items and their verification rules.
-        </dd>
-
-        <dt><dfn>PID</dfn> (person identification data)</dt>
-        <dd>
-          A set of data that identifies a person under applicable law or
-          standards contexts.
-        </dd>
-
-        <dt><dfn>DID Controller</dfn></dt>
-        <dd>
-          Entity that controls DID verification methods and service endpoints as
-          described by Controlled Identifiers
-          <a href="#ref-controller-document">[CONTROLLER-DOCUMENT]</a>.
-        </dd>
-
-        <dt><dfn>verification material</dfn></dt>
-        <dd>
-          Public DID:WEBVH-resolved key, status, and history material used by a
-          verifier to validate proof artifacts and detect conflicts.
-        </dd>
-
-        <dt><dfn>proof artifact</dfn></dt>
-        <dd>
-          Wallet-private VC-family artifact carrying liability-bearing claims
-          and proof metadata.
-        </dd>
-
-        <dt><dfn>wallet</dfn></dt>
-        <dd>
-          End-user software that stores private proof artifacts, mediates user
-          disclosure decisions, and can produce countersigned presentations.
-        </dd>
-
-        <dt><dfn>QTS host</dfn></dt>
-        <dd>
-          Network participant that publishes and serves public verification
-          material according to GQTS trust-network semantics
-          <a href="#ref-gqts-core">[GQTS-CORE]</a>.
-        </dd>
-
-        <dt><dfn>tamper-evident event log</dfn></dt>
-        <dd>
-          Append-only directed linear signed history whose entries can be
-          verified independently and reconciled across origins.
-        </dd>
-
-        <dt><dfn>DID:WEBVH</dfn></dt>
-        <dd>
-          DID method profile using web resolution plus verifiable append-only
-          history semantics <a href="#ref-did-webvh">[DID-WEBVH]</a>.
-        </dd>
-
         <dt><dfn>Qualified Electronic Signature</dfn></dt>
         <dd>
           Qualified Electronic Signature: a DID-made signature that attests a
@@ -419,34 +371,12 @@
           the VC Data Model—so it expresses organizational origin and integrity.
         </dd>
 
-        <dt><dfn>list</dfn></dt>
+        <dt><dfn>GQES proof artifact</dfn></dt>
         <dd>
-          Data concept used as defined by Infra
-          <a href="#ref-infra">[INFRA]</a>.
-        </dd>
-
-        <dt><dfn>set</dfn></dt>
-        <dd>
-          Data concept used as defined by Infra
-          <a href="#ref-infra">[INFRA]</a>.
-        </dd>
-
-        <dt><dfn>byte sequence</dfn></dt>
-        <dd>
-          Data concept used as defined by Infra
-          <a href="#ref-infra">[INFRA]</a>.
-        </dd>
-
-        <dt><dfn>tuple</dfn></dt>
-        <dd>
-          Data concept used as defined by Infra
-          <a href="#ref-infra">[INFRA]</a>.
-        </dd>
-
-        <dt><dfn>zero-trust verification model</dfn></dt>
-        <dd>
-          A verifier posture where acceptance requires explicit
-          cryptographically checkable artifacts and declared policy inputs.
+          A VC/VP-family artifact carrying a
+          <a>Qualified Electronic Signature</a> or a
+          <a>Qualified Electronic Seal</a>, including proof metadata required
+          for deterministic verification.
         </dd>
       </dl>
     </section>
@@ -527,7 +457,8 @@
               <td>Verification material</td>
               <td>Public</td>
               <td>
-                MUST be published as DID:WEBVH history and status material.
+                MUST be published as public DID-linked history and status
+                material under the declared profile.
               </td>
               <td>
                 Resolve keys, history continuity, revocation status, and key
@@ -626,8 +557,19 @@
             sufficient for independent verifier evaluation.
           </li>
           <li>
-            The proof artifact MUST be verifiable using public
-            <a>verification material</a> resolved from referenced DID material.
+            The proof artifact MUST be verifiable using public verification
+            material resolved from referenced DID material.
+          </li>
+          <li>
+            If the artifact claims <a>Qualified Electronic Signature</a>, it
+            MUST include verifiable linkage to valid PID issuance/binding
+            evidence under GDIS Core
+            <a href="#ref-gdis-core">[GDIS-CORE]</a>.
+          </li>
+          <li>
+            If the artifact claims <a>Qualified Electronic Seal</a>, it MUST
+            include issuer authorization evidence or delegated authority-chain
+            evidence verifiable under the applicable governance profile.
           </li>
           <li>
             Proof objects SHOULD use VC Data Integrity baseline semantics
@@ -639,7 +581,7 @@
       <section id="req-gqes-02">
         <h3>
           <span id="REQ-GQES-02" class="mono">REQ-GQES-02</span> DID Binding and
-          DID:WEBVH Resolution
+          DID Resolution Profile
         </h3>
         <ul>
           <li>
@@ -647,8 +589,8 @@
             verification material history used by verifiers.
           </li>
           <li>
-            For GQES Core, the controlling DID method MUST be
-            <a>DID:WEBVH</a>.
+            GQES Core MUST NOT require one specific DID method. A deployment
+            profile MUST declare accepted DID methods and history semantics.
           </li>
           <li>
             DID resolution artifacts MUST expose append-only history and
@@ -665,12 +607,12 @@
         </h3>
         <ul>
           <li>
-            <a>verification material</a> MUST be publicly resolvable over web
-            retrieval interfaces.
+            Verification material MUST be publicly resolvable over web retrieval
+            interfaces.
           </li>
           <li>
             Status, revocation, and key-history material MUST be publicly
-            available as DID:WEBVH history-linked data.
+            available as profile-conformant history-linked data.
           </li>
           <li>
             Producers MUST provide at least one authoritative publication origin
@@ -692,7 +634,8 @@
         </h3>
         <ul>
           <li>
-            <a>proof artifact</a> objects and private attributes MUST remain
+            <a>GQES proof artifact</a> objects and private attributes MUST
+            remain
             under wallet/private custody unless explicitly disclosed by the
             liable party.
           </li>
@@ -796,10 +739,16 @@
             semantics.
           </li>
           <li>
-            The procedure MUST resolve DID:WEBVH verification material, verify
-            DID history integrity, validate VC proof material, check
+            The procedure MUST resolve profile-declared DID verification
+            material, verify DID history integrity, validate VC proof material,
+            check
             status/revocation/key-history constraints, and return structured
             decision output.
+          </li>
+          <li>
+            The procedure MUST apply role-specific checks: QES paths require PID
+            binding and QSCD-mediated signing evidence; QSeal paths require
+            issuer authorization/delegation evidence.
           </li>
         </ul>
       </section>
@@ -847,12 +796,13 @@
             proof verification method references.
           </li>
           <li>
-            Ensure at least one controlling DID is DID:WEBVH. If not, return
+            Enforce the deployment profile's accepted DID methods. If all
+            referenced DID methods are outside the active profile, return
             <span class="mono">invalid</span> with
             <span class="mono">ERR_DID_METHOD_UNSUPPORTED</span>.
           </li>
           <li>
-            Resolve DID:WEBVH history and verify append-only continuity,
+            Resolve DID history and verify append-only continuity,
             signature chain integrity, and verification-method lineage.
           </li>
           <li>
@@ -894,63 +844,6 @@
             references when all required checks pass.
           </li>
         </ol>
-        <pre
-          class="example"
-        ><code class="js">function VerifyGQES(vc, now, policy) {
-  const result = {
-    decision: 'indeterminate',
-    reasons: [],
-    mechanicalValidity: 'indeterminate',
-    recognitionStatus: 'indeterminate',
-  }
-
-  if (!isVcObject(vc)) return invalid(result, 'ERR_NOT_VC')
-  if (!hasRequiredProof(vc)) return invalid(result, 'ERR_PROOF_MISSING')
-
-  const didRefs = extractDidReferences(vc)
-  if (!hasDidWebVhController(didRefs)) {
-    return invalid(result, 'ERR_DID_METHOD_UNSUPPORTED')
-  }
-
-  const resolution = resolveDidWebVhHistory(didRefs, now, policy)
-  if (resolution.unavailable) {
-    return indeterminate(result, 'ERR_VERIFICATION_MATERIAL_UNAVAILABLE')
-  }
-  if (!resolution.historyValid) return invalid(result, 'ERR_HISTORY_INVALID')
-
-  const canonicalInput = canonicalizeForProof(vc, resolution, policy)
-  if (!canonicalInput.ok) return invalid(result, 'ERR_CANONICALIZATION_FAILED')
-  if (!verifyProof(canonicalInput, policy)) return invalid(result, 'ERR_PROOF_INVALID')
-
-  const assertedAt = extractAssertedAt(vc)
-  if (!isKeyAuthorizedAt(assertedAt, resolution.history)) {
-    return invalid(result, 'ERR_KEY_NOT_AUTHORIZED_AT_TIME')
-  }
-
-  const status = evaluateStatusAndRevocation(vc, assertedAt, now, policy, resolution)
-  if (status.unavailable) return indeterminate(result, 'ERR_STATUS_UNAVAILABLE')
-  if (status.revokedOrCutoff) return invalid(result, 'ERR_REVOKED_OR_CUTOFF')
-
-  if (isCountersignedPresentation(vc)) {
-    if (!verifyCountersignatureBinding(vc, policy)) {
-      return invalid(result, 'ERR_COUNTERSIGN_INVALID')
-    }
-  }
-
-  return valid(result)
-}</code></pre>
-
-        <pre class="example"><code class="json">{
-  "decision": "valid | invalid | indeterminate",
-  "reasons": ["ERR_*"],
-  "mechanicalValidity": "pass | fail | indeterminate",
-  "recognitionStatus": "accepted | rejected | indeterminate | policy-out-of-scope",
-  "artifactType": "QualifiedElectronicSignature | QualifiedElectronicSeal",
-  "issuerDid": "did:webvh:example",
-  "verificationMethod": "did:webvh:example#key-1",
-  "assertedAt": "2026-02-19T12:00:00Z",
-  "evaluatedAt": "2026-02-19T12:00:03Z"
-}</code></pre>
       </section>
     </section>
 
@@ -975,7 +868,7 @@
             <td>Issuer/Sealer, Wallet, Verifier</td>
           </tr>
           <tr>
-            <td>REQ-GQES-02 DID binding and DID:WEBVH</td>
+            <td>REQ-GQES-02 DID binding and DID profile selection</td>
             <td>DID references and DID history</td>
             <td>Issuer/Sealer, Wallet</td>
             <td>Verifier</td>
@@ -983,7 +876,7 @@
           </tr>
           <tr>
             <td>REQ-GQES-03 Verification material publicness</td>
-            <td>Public DID:WEBVH verification material</td>
+            <td>Public DID-linked verification material</td>
             <td>Issuer/Sealer, Publication operator</td>
             <td>Verifier</td>
             <td>Issuer/Sealer, Verifier</td>
@@ -1133,6 +1026,78 @@
       </p>
     </section>
 
+    <section id="formal-source-mapping" class="informative">
+      <h2>Formal Source and Profile Mapping</h2>
+      <p>
+        This section maps GQES requirements to formal source families and
+        sibling GIDAS specifications. It is informative and does not create new
+        requirements.
+      </p>
+      <table class="simple tight">
+        <thead>
+          <tr>
+            <th>GQES Concern</th>
+            <th>Requirement IDs</th>
+            <th>Formal Source Family</th>
+            <th>Sibling Spec Boundary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>VC proof container and integrity model</td>
+            <td>REQ-GQES-01, REQ-GQES-07</td>
+            <td>
+              W3C VC Data Model / Data Integrity
+              <a href="#ref-vc-dm2">[VC-DM2]</a>
+              <a href="#ref-vc-data-integrity">[VC-DATA-INTEGRITY]</a>
+            </td>
+            <td>GQES defines semantics; wire profile remains external.</td>
+          </tr>
+          <tr>
+            <td>Natural-person QES linkage to PID and QSCD evidence</td>
+            <td>REQ-GQES-01, REQ-GQES-05, REQ-GQES-08</td>
+            <td>
+              eIDAS legal baseline + ETSI trust-service baseline
+              <a href="#ref-eidas-910">[EU-910/2014]</a>
+              <a href="#ref-etsi-319401">[ETSI-319401]</a>
+            </td>
+            <td>
+              PID issuance/binding in GDIS; QSCD controls in GQSCD.
+            </td>
+          </tr>
+          <tr>
+            <td>Organization/government seal authorization/delegation</td>
+            <td>REQ-GQES-01, REQ-GQES-08</td>
+            <td>
+              eIDAS legal baseline + trusted-list governance inputs
+              <a href="#ref-eidas-910">[EU-910/2014]</a>
+              <a href="#ref-eu-trusted-lists">[EU-TRUSTED-LISTS]</a>
+            </td>
+            <td>Delegation and issuer-chain evidence in GDIS mappings.</td>
+          </tr>
+          <tr>
+            <td>Public verification material and status publication</td>
+            <td>REQ-GQES-02, REQ-GQES-03, REQ-GQES-05</td>
+            <td>
+              Web/DID resolution profiles and EBSI compatibility mappings
+              <a href="#ref-did-core">[DID-CORE]</a>
+              <a href="#ref-ebsi-vc-vp">[EBSI-VC-VP]</a>
+            </td>
+            <td>Replication and host behavior in GQTS.</td>
+          </tr>
+          <tr>
+            <td>Wallet custody and countersigned presentation behavior</td>
+            <td>REQ-GQES-04, REQ-GQES-06</td>
+            <td>
+              Wallet and presentation profile constraints
+              <a href="#ref-ebsi-vc-vp">[EBSI-VC-VP]</a>
+            </td>
+            <td>Wallet private history and portability in GQTW.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
     <section id="security-considerations">
       <h2>Security Considerations</h2>
       <h3>Threat Model</h3>
@@ -1141,10 +1106,9 @@
         security boundaries are cryptographically enforced.
       </p>
       <p>
-        Verifier behavior MUST follow a
-        <a>zero-trust verification model</a>: each acceptance decision MUST be
-        based on explicit, cryptographically checkable artifacts and declared
-        policy inputs.
+        Verifier behavior MUST follow a zero-trust verification model: each
+        acceptance decision MUST be based on explicit, cryptographically
+        checkable artifacts and declared policy inputs.
       </p>
       <p>
         At minimum, conforming designs MUST model compromised hosts, compromised
@@ -1163,8 +1127,8 @@
           <tr>
             <td>Compromised or malicious host</td>
             <td>
-              Cross-origin DID:WEBVH history verification and proof validation
-              before acceptance.
+              Cross-origin/profile-conformant DID history verification and proof
+              validation before acceptance.
             </td>
             <td>DID history transcript and proof-verification trace.</td>
           </tr>
@@ -1216,7 +1180,7 @@
       <h2>Privacy Considerations</h2>
       <ul>
         <li>
-          <a>proof artifact</a> objects and private attributes MUST remain
+          <a>GQES proof artifact</a> objects and private attributes MUST remain
           wallet-private by default.
         </li>
         <li>
@@ -1312,6 +1276,16 @@
       <section>
         <h3>VC / Controller / Proof Stack</h3>
         <ul>
+          <li id="ref-did-core">
+            <a href="https://www.w3.org/TR/did-core/"
+              >[DID-CORE] Decentralized Identifiers (DID) v1.0</a
+            >
+          </li>
+          <li id="ref-vc-dm2">
+            <a href="https://www.w3.org/TR/vc-data-model-2.0/"
+              >[VC-DM2] Verifiable Credentials Data Model v2.0</a
+            >
+          </li>
           <li id="ref-controller-document">
             <a href="https://www.w3.org/TR/cid-1.0/"
               >[CONTROLLER-DOCUMENT] Controlled Identifiers v1.0</a
@@ -1375,6 +1349,28 @@
             <a href="https://eur-lex.europa.eu/eli/reg/2024/1183/oj/eng"
               >[EU-2024/1183] Regulation (EU) 2024/1183 amending Regulation (EU)
               No 910/2014</a
+            >
+          </li>
+          <li id="ref-eu-trusted-lists">
+            <a href="https://digital-strategy.ec.europa.eu/en/policies/eu-trusted-lists"
+              >[EU-TRUSTED-LISTS] EU Trusted Lists</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>ETSI and Ecosystem Inputs</h3>
+        <ul>
+          <li id="ref-etsi-319401">
+            <a
+              href="https://www.etsi.org/deliver/etsi_en/319400_319499/319401/03.01.01_60/en_319401v030101p.pdf"
+              >[ETSI-319401] ETSI EN 319 401</a
+            >
+          </li>
+          <li id="ref-ebsi-vc-vp">
+            <a href="https://hub.ebsi.eu/vc-framework/ebsi-w3c-vc-vp"
+              >[EBSI-VC-VP] EBSI VC Framework: EBSI W3C VC/VP</a
             >
           </li>
         </ul>
