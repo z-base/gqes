@@ -1,5 +1,5 @@
 {
-  "name": "@z-base/package-name",
+  "name": "@z-base/oqes",
   "version": "0.0.0",
   "description": "",
   "keywords": [
@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<entity>/<package-name>.git"
+    "url": "git+https://github.com/entity/oqes.git"
   },
   "bugs": {
-    "url": "https://github.com/<entity>/<package-name>/issues"
+    "url": "https://github.com/entity/oqes/issues"
   },
-  "homepage": "https://z-base.github.io/<package-name>",
+  "homepage": "https://z-base.github.io/oqes",
   "files": [
     "dist",
     "LICENSE",

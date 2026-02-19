@@ -2,82 +2,1410 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Package Name</title>
+    <title>Globally Qualified Electronic Seals / Signatures (GQES) Core</title>
     <script
       src="https://www.w3.org/Tools/respec/respec-w3c"
       class="remove"
-      defer
+      defer="defer"
     ></script>
     <script class="remove">
       var respecConfig = {
-        specStatus: 'ED',
-        editors: [
-          { name: 'Jori Lehtinen', url: 'https://github.com/jortsupetterson' },
-        ],
-        github: 'z-base/package-name',
-        shortName: 'pn',
+        specStatus: 'unofficial',
+        shortName: 'gqes-core',
+        github: 'z-base/gqes',
         xref: 'web-platform',
         group: 'none',
+        editors: [
+          { name: 'Jori Lehtinen', url: 'https://github.com/jortsupetterson' },
+          {
+            name: 'OpenAI GPT-5 Codex (LLM drafting assistant)',
+            url: 'https://openai.com/',
+          },
+        ],
         lint: {
           'informative-dfn': true,
           'local-refs-exist': true,
           'no-unused-dfns': true,
         },
+        localBiblio: {
+          'GQES-CORE': {
+            title:
+              'Globally Qualified Electronic Seals / Signatures (GQES) Core',
+            href: 'https://z-base.github.io/gqes/',
+            status: 'unofficial',
+            publisher: 'z-base',
+          },
+          'GDIS-CORE': {
+            title: 'Global Digital Identity Scheme (GDIS) Core',
+            href: 'https://z-base.github.io/gdis/',
+            status: 'unofficial',
+            publisher: 'z-base',
+          },
+          'GQSCD-CORE': {
+            title: 'Globally Qualified Signature Creation Device (GQSCD) Core',
+            href: 'https://z-base.github.io/gqscd/',
+            status: 'unofficial',
+            publisher: 'z-base',
+          },
+          'GQTS-CORE': {
+            title: 'Globally Qualified Trust Service (GQTS) Core',
+            href: 'https://z-base.github.io/gqts/',
+            status: 'unofficial',
+            publisher: 'z-base',
+          },
+          'GQTW-CORE': {
+            title: 'Globally Qualified Trust Wallet (GQTW) Core',
+            href: 'https://z-base.github.io/gqtw/',
+            status: 'unofficial',
+            publisher: 'z-base',
+          },
+        },
       }
     </script>
+    <style>
+      .mono {
+        font-family: Consolas, Monaco, 'Courier New', monospace;
+      }
+
+      .tight td,
+      .tight th {
+        vertical-align: top;
+      }
+
+      .status-tag {
+        display: inline-block;
+        border: 1px solid #999;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-size: 0.85em;
+      }
+    </style>
   </head>
   <body>
     <section id="abstract">
-      <p>This is required.</p>
+      <p>
+        This document specifies
+        <strong
+          >Globally Qualified Electronic Seals / Signatures (GQES) Core</strong
+        >
+        as the GIDAS profile for qualified-signature and qualified-seal
+        semantics packaged as verifier-checkable credentials.
+      </p>
+      <p>
+        It defines deterministic verification requirements for VC-carried proof
+        artifacts, DID:WEBVH-linked public verification material, revocation and
+        key-history cutoffs, and relying-party decision outputs.
+      </p>
+      <p>
+        This specification does not create legal recognition by itself. Legal
+        effect is an external policy and governance decision.
+      </p>
     </section>
+
     <section id="sotd">
-      <p>This is required.</p>
+      <p>This is an unofficial draft.</p>
+      <p>
+        Document authority: this text is not a legal instrument and does not
+        create jurisdictional recognition effects.
+      </p>
+      <p>
+        AI assistance disclosure: this draft used OpenAI GPT-5 Codex for
+        drafting support, structure proposals, and editorial rewrites. Human
+        editor review determined normative intent, accepted/rejected changes,
+        and final wording.
+      </p>
+      <p>
+        Source currency note: linked source pages were checked on February 19,
+        2026.
+      </p>
     </section>
-    <section class="informative">
-      <h2>Introduction</h2>
-      <p>Some informative introductory text.</p>
-      <aside class="note" title="A useful note">
-        <p>I'm a note!</p>
-      </aside>
+
+    <section id="conformance">
+      <p>
+        The key words <em class="rfc2119">MUST</em>,
+        <em class="rfc2119">MUST NOT</em>, <em class="rfc2119">REQUIRED</em>,
+        <em class="rfc2119">SHALL</em>, <em class="rfc2119">SHALL NOT</em>,
+        <em class="rfc2119">SHOULD</em>, <em class="rfc2119">SHOULD NOT</em>,
+        <em class="rfc2119">RECOMMENDED</em>, <em class="rfc2119">MAY</em>, and
+        <em class="rfc2119">OPTIONAL</em> in this document are to be interpreted
+        as described in BCP 14
+        <a href="#ref-rfc2119">[RFC2119]</a>
+        <a href="#ref-rfc8174">[RFC8174]</a> when, and only when, they appear in
+        all capitals.
+      </p>
+      <p>
+        Conforming implementations MUST satisfy all requirements for at least
+        one conformance class in
+        <a href="#conformance-classes">Conformance Classes</a>.
+      </p>
+      <p>
+        Unless explicitly overridden, data-model terms such as <a>list</a>,
+        <a>set</a>, <a>tuple</a>, and <a>byte sequence</a> are interpreted
+        according to Infra <a href="#ref-infra">[INFRA]</a>. JSON payload and
+        array semantics are interpreted according to
+        <a href="#ref-rfc8259">[RFC8259]</a>.
+      </p>
+      <p>
+        This specification defines externally observable data models,
+        verification invariants, and deterministic processing outcomes. It does
+        not define implementation architecture, runtime internals, or
+        optimization strategy.
+      </p>
+      <p>
+        End-to-end machine verifiability is mandatory: any acceptance decision,
+        legal-status claim, or policy-compatibility claim MUST be backed by
+        machine-verifiable artifacts and explicit source references.
+      </p>
+      <p>
+        Conformance in this specification is outcome-based: required verifier
+        outputs and security/privacy invariants are normative; implementation
+        strategy remains implementation-defined.
+      </p>
+      <p>
+        This document does not define programming-language implementations or
+        API usage recipes.
+      </p>
+      <p class="note">
+        NOTE: The OpenAPI contracts in this repository are not official. They
+        are SUUNTAA ANTAVIA (indicative only). The real official schemas will be
+        decided after building the first viable, minimal reference
+        implementation and will then be updated to match the proven contracts.
+        The current contracts have not been reviewed and do not represent any
+        recommendations by a human.
+      </p>
     </section>
-    <section>
-      <h2>A section</h2>
-      <aside class="example">
-        <p>This is an example.</p>
-        <pre class="js">
-        // Automatic syntax highlighting
-        function someJavaScript(){}
-        </pre>
-      </aside>
-      <section>
-        <h3>I'm a sub-section</h3>
-        <p class="issue" data-number="121">
-          <!-- Issue can automatically be populated from GitHub -->
+
+    <section id="scope">
+      <h2>Scope</h2>
+      <p>This specification covers:</p>
+      <ul>
+        <li>
+          the object of standardization for Globally Qualified Electronic
+          Signature and Globally Qualified Electronic Seal artifacts;
+        </li>
+        <li>
+          VC-based proof artifact semantics, DID binding constraints, and
+          deterministic verifier outputs;
+        </li>
+        <li>
+          public/private liability split invariants: public verification
+          material and private proof custody;
+        </li>
+        <li>
+          revocation, status, key-history cutoff behavior, and countersigned
+          presentation verification order;
+        </li>
+        <li>
+          conformance classes and requirement traceability across producer,
+          wallet, verifier, and relying-party roles.
+        </li>
+      </ul>
+      <p>This specification does not:</p>
+      <ul>
+        <li>create legal recognition by itself;</li>
+        <li>
+          redefine physical PID extraction and identity-item binding mechanics
+          from GDIS Core <a href="#ref-gdis-core">[GDIS-CORE]</a>;
+        </li>
+        <li>
+          redefine device certification, key-custody hardware properties, or
+          signer-intent ceremony mechanics from GQSCD Core
+          <a href="#ref-gqscd-core">[GQSCD-CORE]</a>;
+        </li>
+        <li>
+          redefine trust-network host replication, merge, or event-log transport
+          mechanics from GQTS Core <a href="#ref-gqts-core">[GQTS-CORE]</a>;
+        </li>
+        <li>
+          redefine wallet-private history, backup, or portability mechanics from
+          GQTW Core <a href="#ref-gqtw-core">[GQTW-CORE]</a>.
+        </li>
+      </ul>
+    </section>
+
+    <section id="positioning-adoption" class="informative">
+      <h2>Positioning and Adoption Model</h2>
+      <p>
+        This section is informative. It describes stakeholder adoption pathways
+        as explicit
+        <span class="mono"
+          >goal -&gt; required artifact/interface -&gt; verifier behavior -&gt;
+          adoption pathway</span
+        >
+        mappings.
+      </p>
+      <table class="simple tight">
+        <thead>
+          <tr>
+            <th>Stakeholder</th>
+            <th>Goal</th>
+            <th>Required Artifact/Interface</th>
+            <th>Verifier Behavior</th>
+            <th>Adoption Pathway</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Device and platform manufacturers</td>
+            <td>Expose auditable signer-intent and key-custody evidence.</td>
+            <td>
+              Device assurance outputs consumed by QES/QSeal verification flows.
+            </td>
+            <td>
+              Verify that QES claims include QSCD-class evidence linkage when
+              policy requires.
+            </td>
+            <td>
+              Publish profile bindings from platform evidence to GQES verifier
+              checks.
+            </td>
+          </tr>
+          <tr>
+            <td>Wallet and app implementers</td>
+            <td>
+              Keep proof custody private while enabling deterministic
+              verification.
+            </td>
+            <td>
+              VC proof artifacts, consent logs, selective-disclosure controls,
+              countersignature support.
+            </td>
+            <td>
+              Verify challenge, audience, freshness, and artifact-binding for
+              countersigned presentations.
+            </td>
+            <td>
+              Publish conformance reports and avoid remote-by-default custody
+              shortcuts.
+            </td>
+          </tr>
+          <tr>
+            <td>Standards development organizations (SDOs)</td>
+            <td>Define interoperable profiles and test suites.</td>
+            <td>
+              Profile constraints, deterministic test vectors, and requirement
+              mappings.
+            </td>
+            <td>
+              Require identical outputs for identical inputs across
+              implementations.
+            </td>
+            <td>Adopt profile work items over GQES Core requirements.</td>
+          </tr>
+          <tr>
+            <td>Governments and regulators</td>
+            <td>
+              Publish recognition inputs without changing cryptographic
+              semantics.
+            </td>
+            <td>
+              Authoritative registries, trusted lists, status feeds, and
+              policy-discovery endpoints.
+            </td>
+            <td>
+              Keep cryptographic validity separate from legal recognition
+              outputs.
+            </td>
+            <td>
+              Publish compatibility mappings over the baseline web profile.
+            </td>
+          </tr>
+          <tr>
+            <td>Auditors, CABs, and assessors</td>
+            <td>Evaluate machine-verifiable conformance evidence.</td>
+            <td>
+              Requirement-id mapped evidence artifacts, test assertions, and
+              deterministic verifier transcripts.
+            </td>
+            <td>
+              Reject narrative-only assurance claims lacking artifact-level
+              verification.
+            </td>
+            <td>
+              Issue clause-mapped reports with explicit pass/fail rationale.
+            </td>
+          </tr>
+          <tr>
+            <td>Verifiers and relying parties</td>
+            <td>Produce deterministic acceptance or rejection decisions.</td>
+            <td>
+              Public DID:WEBVH verification material and holder-provided proof
+              artifacts.
+            </td>
+            <td>
+              Check proof validity, revocation, key-history cutoffs, and
+              countersignature order where applicable.
+            </td>
+            <td>
+              Deploy policy overlays without replacing baseline cryptographic
+              checks.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+      <dl>
+        <dt><dfn>governance area</dfn></dt>
+        <dd>
+          A legal and administrative domain that issues and governs identity
+          items and their verification rules.
+        </dd>
+
+        <dt><dfn>PID</dfn> (person identification data)</dt>
+        <dd>
+          A set of data that identifies a person under applicable law or
+          standards contexts.
+        </dd>
+
+        <dt><dfn>DID Controller</dfn></dt>
+        <dd>
+          Entity that controls DID verification methods and service endpoints as
+          described by Controlled Identifiers
+          <a href="#ref-controller-document">[CONTROLLER-DOCUMENT]</a>.
+        </dd>
+
+        <dt><dfn>verification material</dfn></dt>
+        <dd>
+          Public DID:WEBVH-resolved key, status, and history material used by a
+          verifier to validate proof artifacts and detect conflicts.
+        </dd>
+
+        <dt><dfn>proof artifact</dfn></dt>
+        <dd>
+          Wallet-private VC-family artifact carrying liability-bearing claims
+          and proof metadata.
+        </dd>
+
+        <dt><dfn>wallet</dfn></dt>
+        <dd>
+          End-user software that stores private proof artifacts, mediates user
+          disclosure decisions, and can produce countersigned presentations.
+        </dd>
+
+        <dt><dfn>QTS host</dfn></dt>
+        <dd>
+          Network participant that publishes and serves public verification
+          material according to GQTS trust-network semantics
+          <a href="#ref-gqts-core">[GQTS-CORE]</a>.
+        </dd>
+
+        <dt><dfn>tamper-evident event log</dfn></dt>
+        <dd>
+          Append-only directed linear signed history whose entries can be
+          verified independently and reconciled across origins.
+        </dd>
+
+        <dt><dfn>DID:WEBVH</dfn></dt>
+        <dd>
+          DID method profile using web resolution plus verifiable append-only
+          history semantics <a href="#ref-did-webvh">[DID-WEBVH]</a>.
+        </dd>
+
+        <dt><dfn>Qualified Electronic Signature</dfn></dt>
+        <dd>
+          Qualified Electronic Signature: a DID-made signature that attests a
+          governance-backed PID (or link to it) and proves a QSCD was used,
+          packaged in the VC Data Model—so it expresses natural person intent.
+        </dd>
+
+        <dt><dfn>Qualified Electronic Seal</dfn></dt>
+        <dd>
+          Qualified Electronic Seal: a governance-issuer entity’s DID-made
+          signature that is verifiable back to that organization’s
+          identity/authorization and protects origin + integrity, packaged in
+          the VC Data Model—so it expresses organizational origin and integrity.
+        </dd>
+
+        <dt><dfn>list</dfn></dt>
+        <dd>
+          Data concept used as defined by Infra
+          <a href="#ref-infra">[INFRA]</a>.
+        </dd>
+
+        <dt><dfn>set</dfn></dt>
+        <dd>
+          Data concept used as defined by Infra
+          <a href="#ref-infra">[INFRA]</a>.
+        </dd>
+
+        <dt><dfn>byte sequence</dfn></dt>
+        <dd>
+          Data concept used as defined by Infra
+          <a href="#ref-infra">[INFRA]</a>.
+        </dd>
+
+        <dt><dfn>tuple</dfn></dt>
+        <dd>
+          Data concept used as defined by Infra
+          <a href="#ref-infra">[INFRA]</a>.
+        </dd>
+
+        <dt><dfn>zero-trust verification model</dfn></dt>
+        <dd>
+          A verifier posture where acceptance requires explicit
+          cryptographically checkable artifacts and declared policy inputs.
+        </dd>
+      </dl>
+    </section>
+
+    <section id="normative-interface-surface">
+      <h2>Normative Interface Surface</h2>
+      <p>
+        ReSpec prose in this specification defines interface invariants and
+        processing behavior. It does not restate wire-format field contracts.
+      </p>
+      <p>
+        During the provisional phase this repository does not define
+        GQES-specific protocol endpoints. If a future revision adds protocol
+        endpoints, normative wire contracts MUST be defined in
+        <span class="mono">openapi.yaml</span>, while this specification remains
+        authoritative for invariants, processing behavior, and conformance
+        outcomes.
+      </p>
+    </section>
+
+    <section id="dependency-boundaries">
+      <h2>Dependency Boundaries</h2>
+      <p>
+        <span class="status-tag">Cross-Spec Boundary Layer</span>
+      </p>
+      <p>
+        GQES Core defines seal/signature semantics, proof/privacy invariants,
+        and verifier behavior. It relies on other GIDAS specifications for
+        component-specific mechanics.
+      </p>
+      <ul>
+        <li>
+          GDIS Core defines physical identity-item extraction and PID-to-DID
+          binding mechanics <a href="#ref-gdis-core">[GDIS-CORE]</a>.
+        </li>
+        <li>
+          GQSCD Core defines protected key custody, sole-control evidence, and
+          signer-intent controls <a href="#ref-gqscd-core">[GQSCD-CORE]</a>.
+        </li>
+        <li>
+          GQTS Core defines replicated host participation, tamper-evident
+          history transport, and merge behavior
+          <a href="#ref-gqts-core">[GQTS-CORE]</a>.
+        </li>
+        <li>
+          GQTW Core defines wallet-private history, portability, and custody
+          behaviors beyond this spec's proof/privacy invariants
+          <a href="#ref-gqtw-core">[GQTW-CORE]</a>.
+        </li>
+      </ul>
+    </section>
+
+    <section id="architecture-data-model">
+      <h2>Architecture and Data Model</h2>
+      <p>
+        This section defines the GQES object of standardization: qualified
+        signatures and qualified seals are both VC-packaged proof artifacts with
+        DID-linked public verification material.
+      </p>
+      <p>
+        Hard invariant split: verification material is public; proof artifact is
+        private and controlled by the liable/relying party.
+      </p>
+
+      <section id="artifact-partition">
+        <h3>Public and Private Artifact Partition</h3>
+        <table class="simple tight">
+          <thead>
+            <tr>
+              <th>Artifact Type</th>
+              <th>Custody</th>
+              <th>Publication Requirement</th>
+              <th>Verifier Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Verification material</td>
+              <td>Public</td>
+              <td>
+                MUST be published as DID:WEBVH history and status material.
+              </td>
+              <td>
+                Resolve keys, history continuity, revocation status, and key
+                validity interval.
+              </td>
+            </tr>
+            <tr>
+              <td>Proof artifact (VC)</td>
+              <td>Wallet/private</td>
+              <td>
+                MUST remain private by default; disclosure is holder-mediated.
+              </td>
+              <td>
+                Validate proof, issuer/subject linkage, and presentation
+                semantics.
+              </td>
+            </tr>
+            <tr>
+              <td>Private attributes and witnesses</td>
+              <td>Wallet/private</td>
+              <td>
+                MUST NOT be required by hosts for verification material
+                publication.
+              </td>
+              <td>Used only when holder discloses under policy and consent.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="lifecycle-high-level" class="informative">
+        <h3>End-to-End Lifecycle Walkthrough (Informative)</h3>
+        <p>
+          A governance-recognized PID issuer listed on the EU Trusted List
+          extracts identity data from a physical identity item via MRZ and NFC
+          and binds it to a user-controlled widely available (phone, tablet,
+          laptop, pc, etc.) Qualified Signature Creation Device. This initial
+          binding is structured as a Verifiable Credential whose subject is a
+          DID representing that device-controlled digital identity. The issuer
+          (physical identity item) applies a Qualified Electronic Seal,
+          establishing the legal trust anchor for the identity binding and
+          certifying that the PID evidence corresponds to the DID’s verification
+          methods.
+        </p>
+        <p>
+          The DID becomes the public resolution handle for that identity. Its
+          DID Document publishes verification material and service endpoints and
+          is hosted across multiple HTTP origins participating in a
+          tamper-evident replicated network operated by qualified trust
+          services. These hosts maintain append-only directed linear graph
+          histories and cross-check signatures so inconsistencies are detectable
+          and state converges without reliance on a single operator.
+        </p>
+        <p>
+          The user interacts through a wallet implemented via
+          navigator.credentials and WebAuthn. The QSCD-backed keys can produce
+          Qualified Electronic Signatures and Qualified Electronic Attestations
+          of Attributes directly from the device. The wallet can also store
+          externally issued Qualified Electronic Seals and present them,
+          optionally countersigned with a qualified signature, which itself
+          constitutes a qualified attestation presentation. Private attributes
+          remain local unless selectively disclosed.
+        </p>
+        <p>
+          All signed or sealed artifacts reference the DID for verification,
+          while status, revocation, and key-history data are published on the
+          replicated trust network. If the user revokes or terminates the PID
+          binding to the DID—such as by issuing a signed revocation event with a
+          defined timestamp—claims asserted after that point must be treated as
+          invalid. This preserves user agency while maintaining verifiable
+          historical integrity.
+        </p>
+        <p>
+          In effect, governance provides legally recognized issuers, certified
+          devices enforce sole control of keys, and web standards supply global
+          resolution and interoperability. That alignment forms the operational
+          model known as GIDAS.
         </p>
       </section>
     </section>
-    <section data-dfn-for="Foo">
-      <h2>Start your spec!</h2>
-      <pre class="idl">
-        [Exposed=Window]
-        interface Foo {
-        attribute DOMString bar;
-        undefined doTheFoo();
-        };
-      </pre>
-      <p>The <dfn>Foo</dfn> interface represents a {{Foo}}.</p>
-      <p>
-        The <dfn>doTheFoo()</dfn> method does the foo. Call it by running
-        {{Foo/doTheFoo()}}.
-      </p>
-      <ol class="algorithm">
-        <li>A |variable:DOMString| can be declared like this.</li>
-      </ol>
+
+    <section id="normative-requirements">
+      <h2>Normative Requirements</h2>
+
+      <section id="req-gqes-01">
+        <h3>
+          <span id="REQ-GQES-01" class="mono">REQ-GQES-01</span> Proof Artifact
+          Format
+        </h3>
+        <ul>
+          <li>
+            A GQES proof artifact MUST be a Verifiable Credential (VC) object.
+          </li>
+          <li>
+            Each proof artifact MUST include issuer and subject linkage strategy
+            sufficient for independent verifier evaluation.
+          </li>
+          <li>
+            The proof artifact MUST be verifiable using public
+            <a>verification material</a> resolved from referenced DID material.
+          </li>
+          <li>
+            Proof objects SHOULD use VC Data Integrity baseline semantics
+            <a href="#ref-vc-data-integrity">[VC-DATA-INTEGRITY]</a>.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-02">
+        <h3>
+          <span id="REQ-GQES-02" class="mono">REQ-GQES-02</span> DID Binding and
+          DID:WEBVH Resolution
+        </h3>
+        <ul>
+          <li>
+            A proof artifact MUST reference a DID capable of controlling the
+            verification material history used by verifiers.
+          </li>
+          <li>
+            For GQES Core, the controlling DID method MUST be
+            <a>DID:WEBVH</a>.
+          </li>
+          <li>
+            DID resolution artifacts MUST expose append-only history and
+            verification methods sufficient to validate past and current proof
+            events.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-03">
+        <h3>
+          <span id="REQ-GQES-03" class="mono">REQ-GQES-03</span> Verification
+          Material Publicness and Availability
+        </h3>
+        <ul>
+          <li>
+            <a>verification material</a> MUST be publicly resolvable over web
+            retrieval interfaces.
+          </li>
+          <li>
+            Status, revocation, and key-history material MUST be publicly
+            available as DID:WEBVH history-linked data.
+          </li>
+          <li>
+            Producers MUST provide at least one authoritative publication origin
+            and SHOULD provide at least one additional independent origin for
+            availability.
+          </li>
+          <li>
+            If required verification material cannot be retrieved at evaluation
+            time, verifier output MUST be
+            <span class="mono">indeterminate</span>.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-04">
+        <h3>
+          <span id="REQ-GQES-04" class="mono">REQ-GQES-04</span> Proof Privacy
+          and Custody
+        </h3>
+        <ul>
+          <li>
+            <a>proof artifact</a> objects and private attributes MUST remain
+            under wallet/private custody unless explicitly disclosed by the
+            liable party.
+          </li>
+          <li>
+            Network hosts and replication operators MUST NOT require disclosure
+            of private attributes to publish or serve public verification
+            material.
+          </li>
+          <li>
+            Relying parties MUST request only minimally required proof content
+            for decision objectives.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-05">
+        <h3>
+          <span id="REQ-GQES-05" class="mono">REQ-GQES-05</span> Revocation,
+          Status, and Key-History Cutoffs
+        </h3>
+        <ul>
+          <li>
+            Verifiers MUST evaluate revocation/status and key-history state
+            before accepting a signature or seal.
+          </li>
+          <li>
+            If a revocation or PID-termination event defines a cutoff timestamp,
+            any claim asserted after that cutoff MUST be treated as invalid.
+          </li>
+          <li>
+            Verification methods MUST be authorized in DID history at the proof
+            assertion time.
+          </li>
+          <li>
+            If status data required by policy is unavailable, result state MUST
+            be <span class="mono">indeterminate</span> and MUST NOT be upgraded
+            to valid.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-06">
+        <h3>
+          <span id="REQ-GQES-06" class="mono">REQ-GQES-06</span> Countersigning
+          and Presentation Semantics
+        </h3>
+        <ul>
+          <li>
+            A wallet MAY present a sealed VC as received and MAY add an optional
+            countersignature for presentation context binding.
+          </li>
+          <li>
+            Verification order MUST be deterministic: first verify the
+            underlying seal/signature VC and status; then verify optional
+            countersignature binding (challenge, audience, nonce, and artifact
+            hash).
+          </li>
+          <li>
+            A countersignature asserts presentation act and holder-controlled
+            consent; it MUST NOT be treated as replacement for issuer
+            seal/signature validity.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-07">
+        <h3>
+          <span id="REQ-GQES-07" class="mono">REQ-GQES-07</span> Deterministic
+          Canonicalization and Hashing Inputs
+        </h3>
+        <ul>
+          <li>
+            Implementations MUST define deterministic canonicalization and hash
+            inputs for proof verification.
+          </li>
+          <li>
+            At minimum, the verifier input tuple MUST include canonicalized VC
+            claims, proof options, resolved verification method state, and
+            required status snapshot references.
+          </li>
+          <li>
+            Equivalent input artifacts MUST produce equivalent verification
+            outputs.
+          </li>
+          <li>
+            If canonicalization or proof-input construction is ambiguous,
+            verification MUST fail deterministically.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-08">
+        <h3>
+          <span id="REQ-GQES-08" class="mono">REQ-GQES-08</span> Deterministic
+          Verifier Procedure
+        </h3>
+        <ul>
+          <li>
+            Verifiers MUST implement
+            <code>VerifyGQES(vc, now, policy)</code> with deterministic output
+            semantics.
+          </li>
+          <li>
+            The procedure MUST resolve DID:WEBVH verification material, verify
+            DID history integrity, validate VC proof material, check
+            status/revocation/key-history constraints, and return structured
+            decision output.
+          </li>
+        </ul>
+      </section>
+
+      <section id="req-gqes-09">
+        <h3>
+          <span id="REQ-GQES-09" class="mono">REQ-GQES-09</span> Verification
+          Output Contract
+        </h3>
+        <ul>
+          <li>
+            Verifier output MUST include
+            <span class="mono">valid</span>, <span class="mono">invalid</span>,
+            or <span class="mono">indeterminate</span> decision state.
+          </li>
+          <li>
+            Output MUST include machine-readable reason codes and evidence
+            references for each negative or indeterminate outcome.
+          </li>
+          <li>
+            Output SHOULD report
+            <span class="mono">mechanicalValidity</span> and
+            <span class="mono">recognitionStatus</span> as separate values.
+          </li>
+        </ul>
+      </section>
     </section>
-    <section id="conformance">
+
+    <section id="processing-model">
+      <h2>Processing Model</h2>
+      <section id="verify-gqes">
+        <h3>
+          <span class="mono">VerifyGQES(vc, now, policy)</span> (Normative)
+        </h3>
+        <ol class="algorithm">
+          <li>
+            Validate that <code>vc</code> is a VC object and that required proof
+            fields are present. If this fails, return
+            <span class="mono">invalid</span> with reason
+            <span class="mono">ERR_NOT_VC</span> or
+            <span class="mono">ERR_PROOF_MISSING</span>.
+          </li>
+          <li>
+            Extract DID references from issuer, subject linkage fields, and
+            proof verification method references.
+          </li>
+          <li>
+            Ensure at least one controlling DID is DID:WEBVH. If not, return
+            <span class="mono">invalid</span> with
+            <span class="mono">ERR_DID_METHOD_UNSUPPORTED</span>.
+          </li>
+          <li>
+            Resolve DID:WEBVH history and verify append-only continuity,
+            signature chain integrity, and verification-method lineage.
+          </li>
+          <li>
+            If required DID history or status material is unavailable at
+            evaluation time, return
+            <span class="mono">indeterminate</span> with
+            <span class="mono">ERR_VERIFICATION_MATERIAL_UNAVAILABLE</span>.
+          </li>
+          <li>
+            Canonicalize claims and proof options according to declared
+            cryptosuite rules and verify cryptographic proof validity.
+          </li>
+          <li>
+            Determine assertion timestamp from signed proof metadata. Check that
+            the verification method was authorized at that timestamp.
+          </li>
+          <li>
+            Resolve revocation/status inputs and apply cutoff semantics. If
+            revoked or terminated before/at asserted instant, return
+            <span class="mono">invalid</span> with
+            <span class="mono">ERR_REVOKED_OR_CUTOFF</span>.
+          </li>
+          <li>
+            If the artifact is a countersigned presentation, verify base
+            seal/signature first, then verify countersignature binding
+            (challenge/audience/nonce/artifact hash). If countersignature fails,
+            return <span class="mono">invalid</span> with
+            <span class="mono">ERR_COUNTERSIGN_INVALID</span>.
+          </li>
+          <li>
+            Apply policy evaluation. If policy data is unavailable, return
+            <span class="mono">indeterminate</span> with
+            <span class="mono">ERR_POLICY_INPUT_UNAVAILABLE</span>. If policy
+            explicitly rejects, return <span class="mono">invalid</span> with
+            <span class="mono">ERR_POLICY_REJECTED</span>.
+          </li>
+          <li>
+            Return <span class="mono">valid</span> with structured evidence
+            references when all required checks pass.
+          </li>
+        </ol>
+        <pre
+          class="example"
+        ><code class="js">function VerifyGQES(vc, now, policy) {
+  const result = {
+    decision: 'indeterminate',
+    reasons: [],
+    mechanicalValidity: 'indeterminate',
+    recognitionStatus: 'indeterminate',
+  }
+
+  if (!isVcObject(vc)) return invalid(result, 'ERR_NOT_VC')
+  if (!hasRequiredProof(vc)) return invalid(result, 'ERR_PROOF_MISSING')
+
+  const didRefs = extractDidReferences(vc)
+  if (!hasDidWebVhController(didRefs)) {
+    return invalid(result, 'ERR_DID_METHOD_UNSUPPORTED')
+  }
+
+  const resolution = resolveDidWebVhHistory(didRefs, now, policy)
+  if (resolution.unavailable) {
+    return indeterminate(result, 'ERR_VERIFICATION_MATERIAL_UNAVAILABLE')
+  }
+  if (!resolution.historyValid) return invalid(result, 'ERR_HISTORY_INVALID')
+
+  const canonicalInput = canonicalizeForProof(vc, resolution, policy)
+  if (!canonicalInput.ok) return invalid(result, 'ERR_CANONICALIZATION_FAILED')
+  if (!verifyProof(canonicalInput, policy)) return invalid(result, 'ERR_PROOF_INVALID')
+
+  const assertedAt = extractAssertedAt(vc)
+  if (!isKeyAuthorizedAt(assertedAt, resolution.history)) {
+    return invalid(result, 'ERR_KEY_NOT_AUTHORIZED_AT_TIME')
+  }
+
+  const status = evaluateStatusAndRevocation(vc, assertedAt, now, policy, resolution)
+  if (status.unavailable) return indeterminate(result, 'ERR_STATUS_UNAVAILABLE')
+  if (status.revokedOrCutoff) return invalid(result, 'ERR_REVOKED_OR_CUTOFF')
+
+  if (isCountersignedPresentation(vc)) {
+    if (!verifyCountersignatureBinding(vc, policy)) {
+      return invalid(result, 'ERR_COUNTERSIGN_INVALID')
+    }
+  }
+
+  return valid(result)
+}</code></pre>
+
+        <pre class="example"><code class="json">{
+  "decision": "valid | invalid | indeterminate",
+  "reasons": ["ERR_*"],
+  "mechanicalValidity": "pass | fail | indeterminate",
+  "recognitionStatus": "accepted | rejected | indeterminate | policy-out-of-scope",
+  "artifactType": "QualifiedElectronicSignature | QualifiedElectronicSeal",
+  "issuerDid": "did:webvh:example",
+  "verificationMethod": "did:webvh:example#key-1",
+  "assertedAt": "2026-02-19T12:00:00Z",
+  "evaluatedAt": "2026-02-19T12:00:03Z"
+}</code></pre>
+      </section>
+    </section>
+
+    <section id="traceability-matrix" class="informative">
+      <h2>Requirement Traceability Matrix</h2>
+      <table class="simple tight">
+        <thead>
+          <tr>
+            <th>Requirement Unit</th>
+            <th>Primary Artifact</th>
+            <th>Producer</th>
+            <th>Primary Checker</th>
+            <th>Conformance Class Binding</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>REQ-GQES-01 Proof artifact format</td>
+            <td>VC proof artifact</td>
+            <td>Issuer/Sealer, Wallet</td>
+            <td>Verifier</td>
+            <td>Issuer/Sealer, Wallet, Verifier</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-02 DID binding and DID:WEBVH</td>
+            <td>DID references and DID history</td>
+            <td>Issuer/Sealer, Wallet</td>
+            <td>Verifier</td>
+            <td>Issuer/Sealer, Wallet, Verifier</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-03 Verification material publicness</td>
+            <td>Public DID:WEBVH verification material</td>
+            <td>Issuer/Sealer, Publication operator</td>
+            <td>Verifier</td>
+            <td>Issuer/Sealer, Verifier</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-04 Proof privacy and custody</td>
+            <td>Wallet-private proof store and disclosure policy</td>
+            <td>Wallet</td>
+            <td>Verifier, Auditor</td>
+            <td>Wallet</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-05 Revocation and key-history cutoffs</td>
+            <td>Status/revocation and key-lineage evidence</td>
+            <td>Publication operator</td>
+            <td>Verifier</td>
+            <td>Issuer/Sealer, Verifier, Relying Party</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-06 Countersigning and presentation order</td>
+            <td>Presentation envelope and countersignature</td>
+            <td>Wallet</td>
+            <td>Verifier</td>
+            <td>Wallet, Verifier, Relying Party</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-07 Deterministic algorithm inputs</td>
+            <td>Canonicalization profile and input tuple transcript</td>
+            <td>Issuer/Sealer, Wallet</td>
+            <td>Verifier</td>
+            <td>Issuer/Sealer, Wallet, Verifier</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-08 VerifyGQES procedure</td>
+            <td>Verifier transcript and decision output</td>
+            <td>Verifier</td>
+            <td>Auditor, Relying Party</td>
+            <td>Verifier</td>
+          </tr>
+          <tr>
+            <td>REQ-GQES-09 Verification output contract</td>
+            <td>Machine-readable decision object</td>
+            <td>Verifier</td>
+            <td>Relying Party, Auditor</td>
+            <td>Verifier, Relying Party</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="conformance-classes">
+      <h2>Conformance Classes</h2>
+      <table class="simple tight">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Required Requirements</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GQES Issuer/Sealer</td>
+            <td>
+              REQ-GQES-01, REQ-GQES-02, REQ-GQES-03, REQ-GQES-05, REQ-GQES-07
+            </td>
+          </tr>
+          <tr>
+            <td>GQES Wallet</td>
+            <td>
+              REQ-GQES-01, REQ-GQES-02, REQ-GQES-04, REQ-GQES-06, REQ-GQES-07
+            </td>
+          </tr>
+          <tr>
+            <td>GQES Verifier</td>
+            <td>
+              REQ-GQES-02, REQ-GQES-03, REQ-GQES-05, REQ-GQES-06, REQ-GQES-07,
+              REQ-GQES-08, REQ-GQES-09
+            </td>
+          </tr>
+          <tr>
+            <td>GQES Relying Party</td>
+            <td>REQ-GQES-05, REQ-GQES-06, REQ-GQES-09</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="conformance-reporting">
+      <h2>Conformance Reporting</h2>
       <p>
-        This is required for specifications that contain normative material.
+        A conformance claim MUST be accompanied by a machine-readable
+        conformance report.
       </p>
+      <table class="simple tight">
+        <thead>
+          <tr>
+            <th>Report Field</th>
+            <th>Requirement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Implementation identifier and version</td>
+            <td>MUST be declared.</td>
+          </tr>
+          <tr>
+            <td>Conformance class set</td>
+            <td>MUST list all claimed classes.</td>
+          </tr>
+          <tr>
+            <td>Requirement coverage</td>
+            <td>
+              MUST list satisfied and excluded
+              <span class="mono">REQ-GQES-xx</span> identifiers.
+            </td>
+          </tr>
+          <tr>
+            <td>Cross-spec dependency declaration</td>
+            <td>
+              MUST identify applicable GDIS/GQSCD/GQTS/GQTW dependency versions.
+            </td>
+          </tr>
+          <tr>
+            <td>Cryptographic suite declaration</td>
+            <td>MUST declare canonicalization and verification suites.</td>
+          </tr>
+          <tr>
+            <td>Test evidence</td>
+            <td>MUST include pass/fail results and artifact samples.</td>
+          </tr>
+          <tr>
+            <td>Negative-case coverage</td>
+            <td>MUST include invalid and indeterminate decision vectors.</td>
+          </tr>
+          <tr>
+            <td>Policy input evidence</td>
+            <td>
+              MUST list registry/trusted-list/status inputs used for recognition
+              determination.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Reports SHOULD include machine-readable fields so independent tooling
+        can compare behavior across implementations.
+      </p>
+    </section>
+
+    <section id="security-considerations">
+      <h2>Security Considerations</h2>
+      <h3>Threat Model</h3>
+      <p>
+        Implementations MUST assume hostile client/network environments unless
+        security boundaries are cryptographically enforced.
+      </p>
+      <p>
+        Verifier behavior MUST follow a
+        <a>zero-trust verification model</a>: each acceptance decision MUST be
+        based on explicit, cryptographically checkable artifacts and declared
+        policy inputs.
+      </p>
+      <p>
+        At minimum, conforming designs MUST model compromised hosts, compromised
+        wallet UI pathways, replay attempts, revocation/key-history downgrade
+        attempts, and countersignature confusion attacks.
+      </p>
+      <table class="simple tight">
+        <thead>
+          <tr>
+            <th>Threat</th>
+            <th>Required Control</th>
+            <th>Evidence Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Compromised or malicious host</td>
+            <td>
+              Cross-origin DID:WEBVH history verification and proof validation
+              before acceptance.
+            </td>
+            <td>DID history transcript and proof-verification trace.</td>
+          </tr>
+          <tr>
+            <td>Compromised wallet UI or coercive UX</td>
+            <td>
+              GQSCD-linked user-intent ceremony checks and explicit presentation
+              binding validation.
+            </td>
+            <td>
+              Invocation evidence and countersignature-binding transcript.
+            </td>
+          </tr>
+          <tr>
+            <td>Replay of proof artifacts</td>
+            <td>Nonce/audience/freshness verification for presentations.</td>
+            <td>Verifier challenge log and response-binding evidence.</td>
+          </tr>
+          <tr>
+            <td>Revocation/key-history downgrade</td>
+            <td>
+              Mandatory revocation and key-lineage checks at asserted timestamp
+              and evaluation instant.
+            </td>
+            <td>Status snapshot, cutoff event, and key authorization path.</td>
+          </tr>
+          <tr>
+            <td>Countersignature misuse</td>
+            <td>
+              Enforce verification order: base seal/signature validity first,
+              countersignature second.
+            </td>
+            <td>Ordered verifier transcript with step-level verdicts.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Relying parties MUST check revocation and key-history cutoffs and MUST
+        treat missing required status inputs as
+        <span class="mono">indeterminate</span>.
+      </p>
+      <p>
+        "Approved software lists" or governance labels alone MUST NOT be treated
+        as technical guarantees without cryptographic enforcement.
+      </p>
+    </section>
+
+    <section id="privacy-considerations">
+      <h2>Privacy Considerations</h2>
+      <ul>
+        <li>
+          <a>proof artifact</a> objects and private attributes MUST remain
+          wallet-private by default.
+        </li>
+        <li>
+          Public trust-network publication SHOULD include only verification
+          material, status references, and integrity-protected digests.
+        </li>
+        <li>
+          Hosts MUST NOT require raw private attributes for verification
+          material publication or retrieval.
+        </li>
+        <li>
+          Selective disclosure and minimal-necessary presentation SHOULD be
+          preferred for relying-party interactions.
+        </li>
+        <li>
+          Stable identifiers can be highly linkable; profiles SHOULD provide
+          scoped disclosure strategies where this does not break verifier
+          determinism.
+        </li>
+      </ul>
+    </section>
+
+    <section id="iana-considerations">
+      <h2>IANA Considerations</h2>
+      <p>This draft defines no new IANA registries.</p>
+    </section>
+
+    <section class="appendix informative" id="references">
+      <h2>References</h2>
+
+      <section>
+        <h3>Hard Requirements (BCP / Protocols / Formats)</h3>
+        <ul>
+          <li id="ref-rfc2119">
+            <a href="https://www.rfc-editor.org/rfc/rfc2119"
+              >[RFC2119] Key words for use in RFCs to Indicate Requirement
+              Levels</a
+            >
+          </li>
+          <li id="ref-rfc8174">
+            <a href="https://www.rfc-editor.org/rfc/rfc8174"
+              >[RFC8174] Ambiguity of Uppercase vs Lowercase in RFC 2119 Key
+              Words</a
+            >
+          </li>
+          <li id="ref-rfc6838">
+            <a href="https://www.rfc-editor.org/rfc/rfc6838"
+              >[RFC6838] Media Type Specifications and Registration
+              Procedures</a
+            >
+          </li>
+          <li id="ref-rfc8259">
+            <a href="https://www.rfc-editor.org/rfc/rfc8259"
+              >[RFC8259] The JavaScript Object Notation (JSON) Data Interchange
+              Format</a
+            >
+          </li>
+          <li id="ref-rfc8785">
+            <a href="https://www.rfc-editor.org/rfc/rfc8785"
+              >[RFC8785] JSON Canonicalization Scheme (JCS)</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Infra / Language / Structural Semantics</h3>
+        <ul>
+          <li id="ref-ecma262">
+            <a href="https://tc39.es/ecma262/"
+              >[ECMA-262] ECMAScript Language Specification</a
+            >
+          </li>
+          <li id="ref-infra">
+            <a href="https://infra.spec.whatwg.org/"
+              >[INFRA] WHATWG Infra Standard</a
+            >
+          </li>
+          <li id="ref-xmlschema11-2">
+            <a href="https://www.w3.org/TR/xmlschema11-2/"
+              >[XMLSCHEMA11-2] XML Schema 1.1 Part 2: Datatypes</a
+            >
+          </li>
+          <li id="ref-base64url">
+            <a href="https://base64.guru/standards/base64url"
+              >[BASE64URL] Base64URL practical reference (RFC 4648 section 5
+              terminology)</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>VC / Controller / Proof Stack</h3>
+        <ul>
+          <li id="ref-controller-document">
+            <a href="https://www.w3.org/TR/cid-1.0/"
+              >[CONTROLLER-DOCUMENT] Controlled Identifiers v1.0</a
+            >
+          </li>
+          <li id="ref-vc-data-integrity">
+            <a href="https://www.w3.org/TR/vc-data-integrity/"
+              >[VC-DATA-INTEGRITY] Verifiable Credential Data Integrity 1.0</a
+            >
+          </li>
+          <li id="ref-vc-di-ecdsa">
+            <a href="https://www.w3.org/TR/vc-di-ecdsa/"
+              >[VC-DI-ECDSA] Data Integrity ECDSA Cryptosuites v1.0</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>API Contracts</h3>
+        <ul>
+          <li id="ref-oas-3-1-2">
+            <a href="https://spec.openapis.org/oas/v3.1.2.html"
+              >[OAS-3.1.2] OpenAPI Specification 3.1.2</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Tamper-Evident Event Logs / Verifiable History Inputs</h3>
+        <ul>
+          <li id="ref-cel-spec">
+            <a href="https://w3c-ccg.github.io/cel-spec/"
+              >[CEL-SPEC] Composable Event Logs (CEL) Specification</a
+            >
+          </li>
+          <li id="ref-did-webvh">
+            <a href="https://identity.foundation/didwebvh/v1.0/"
+              >[DID-WEBVH] did:webvh DID Method v1.0</a
+            >
+          </li>
+          <li id="ref-json-web-history">
+            <a href="https://z-base.github.io/json-web-history/"
+              >[JSON-WEB-HISTORY] JSON Web History</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>EU Legal Baselines</h3>
+        <ul>
+          <li id="ref-eidas-910">
+            <a href="https://eur-lex.europa.eu/eli/reg/2014/910/2024-10-18/eng"
+              >[EU-910/2014] Regulation (EU) No 910/2014 (eIDAS), consolidated
+              view</a
+            >
+          </li>
+          <li id="ref-eu-2024-1183">
+            <a href="https://eur-lex.europa.eu/eli/reg/2024/1183/oj/eng"
+              >[EU-2024/1183] Regulation (EU) 2024/1183 amending Regulation (EU)
+              No 910/2014</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Project References (GIDAS Family)</h3>
+        <ul>
+          <li id="ref-gdis-core">
+            <a href="https://z-base.github.io/gdis/"
+              >[GDIS-CORE] Global Digital Identity Scheme (GDIS) Core</a
+            >
+          </li>
+          <li id="ref-gqscd-core">
+            <a href="https://z-base.github.io/gqscd/"
+              >[GQSCD-CORE] Globally Qualified Signature Creation Device (GQSCD)
+              Core</a
+            >
+          </li>
+          <li id="ref-gqts-core">
+            <a href="https://z-base.github.io/gqts/"
+              >[GQTS-CORE] Globally Qualified Trust Service (GQTS) Core</a
+            >
+          </li>
+          <li id="ref-gqtw-core">
+            <a href="https://z-base.github.io/gqtw/"
+              >[GQTW-CORE] Globally Qualified Trust Wallet (GQTW) Core</a
+            >
+          </li>
+        </ul>
+      </section>
     </section>
   </body>
 </html>
